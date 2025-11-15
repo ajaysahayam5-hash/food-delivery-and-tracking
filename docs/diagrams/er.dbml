@@ -1,0 +1,157 @@
+// ER diagram source for dbdiagram.io — paste to generate PNG
+// Tables: 16, matches Problem_Statement.md + schema.sql
+
+Table users {
+  id bigint [pk, increment]
+  full_name varchar
+  email varchar [unique, not null]
+  phone varchar
+  password_hash varchar [not null]
+  role varchar [not null, default: 'CUSTOMER']
+  enabled boolean [default: true]
+  email_verified boolean [default: false]
+  created_at timestamp
+}
+
+Table otp_tokens {
+  id bigint [pk, increment]
+  email varchar [not null]
+  otp varchar [not null]
+  expires_at timestamp
+  verified boolean [default: false]
+  created_at timestamp
+}
+
+Table restaurants {
+  id bigint [pk, increment]
+  owner_id bigint [ref: > users.id]
+  restaurant_name varchar [not null]
+  description text
+  address varchar
+  city varchar
+  phone varchar
+  email varchar
+  image_url varchar
+  status varchar [default: 'OPEN']
+  rating decimal
+}
+
+Table menu_categories {
+  id bigint [pk, increment]
+  restaurant_id bigint [ref: > restaurants.id]
+  name varchar [not null]
+  image_url varchar
+}
+
+Table menu_items {
+  id bigint [pk, increment]
+  restaurant_id bigint [ref: > restaurants.id]
+  category_id bigint [ref: > menu_categories.id]
+  name varchar [not null]
+  description text
+  price decimal [not null]
+  image_url varchar
+  available boolean [default: true]
+  rating decimal
+}
+
+Table addresses {
+  id bigint [pk, increment]
+  user_id bigint [ref: > users.id]
+  label varchar
+  address_line varchar
+  city varchar
+  pincode varchar
+  lat double
+  lng double
+}
+
+Table carts {
+  id bigint [pk, increment]
+  user_id bigint [unique, ref: > users.id]
+}
+
+Table cart_items {
+  id bigint [pk, increment]
+  cart_id bigint [ref: > carts.id]
+  menu_item_id bigint [ref: > menu_items.id]
+  quantity int [default: 1]
+  price decimal
+}
+
+Table orders {
+  id bigint [pk, increment]
+  customer_id bigint [ref: > users.id]
+  restaurant_id bigint [ref: > restaurants.id]
+  total_amount decimal
+  delivery_fee decimal
+  order_status varchar [default: 'PLACED']
+  payment_status varchar
+  payment_method varchar [default: 'CASH']
+  delivery_address varchar
+  delivery_address_id bigint [ref: > addresses.id]
+  created_at timestamp
+}
+
+Table order_items {
+  id bigint [pk, increment]
+  order_id bigint [ref: > orders.id]
+  menu_item_id bigint [ref: > menu_items.id]
+  quantity int
+  price decimal
+}
+
+Table payments {
+  id bigint [pk, increment]
+  order_id bigint [unique, ref: > orders.id]
+  payment_method varchar
+  amount decimal
+  transaction_id varchar
+  payment_status varchar
+}
+
+Table delivery_partners {
+  id bigint [pk, increment]
+  user_id bigint [unique, ref: > users.id]
+  vehicle varchar
+  available boolean [default: true]
+}
+
+Table deliveries {
+  id bigint [pk, increment]
+  order_id bigint [unique, ref: > orders.id]
+  partner_id bigint [ref: > delivery_partners.id]
+  tracking_status varchar [default: 'Assigned']
+  delivery_address varchar
+}
+
+Table delivery_locations {
+  id bigint [pk, increment]
+  delivery_id bigint [ref: > deliveries.id]
+  lat double
+  lng double
+  recorded_at timestamp
+}
+
+Table reviews {
+  id bigint [pk, increment]
+  user_id bigint [ref: > users.id]
+  restaurant_id bigint [ref: > restaurants.id]
+  rating int
+  comment text
+  created_at timestamp
+}
+
+Table favorites {
+  id bigint [pk, increment]
+  user_id bigint [ref: > users.id]
+  restaurant_id bigint [ref: > restaurants.id]
+  menu_item_id bigint [ref: > menu_items.id]
+}
+
+// Relationships summary:
+// users 1—N addresses, reviews, favorites, orders, carts(1—1)
+// restaurants 1—N menu_categories, menu_items, orders, reviews
+// orders 1—N order_items; orders 1—1 payments, deliveries
+// deliveries 1—N delivery_locations
+// cart 1—N cart_items; order_items is junction for orders M—N menu_items
