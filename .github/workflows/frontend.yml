@@ -20,6 +20,8 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: '20' }
       - run: npm install
+      - name: Lint (basic style check — prettier)
+        run: npx --yes prettier --check "src/**/*.{js,jsx,css,json}" || echo "Prettier: formatting issues found (non-blocking — run npx prettier --write src to fix)"
       - run: npm run build
       - name: Deploy to Vercel
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
