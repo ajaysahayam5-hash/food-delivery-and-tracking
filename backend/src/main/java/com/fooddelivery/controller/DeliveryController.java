@@ -7,6 +7,10 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Delivery tracking endpoints: assign, status, GPS location post/latest/history.
+ * Why: location writes are append-only history powering the Leaflet live map.
+ */
 @RestController @RequestMapping("/api/deliveries")
 public class DeliveryController {
     private final DeliveryService service;

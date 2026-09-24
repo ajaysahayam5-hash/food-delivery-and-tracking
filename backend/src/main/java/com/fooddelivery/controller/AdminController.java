@@ -4,6 +4,10 @@ import com.fooddelivery.repository.*;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
+/**
+ * Admin endpoints: platform stats for dashboard.
+ * Why: aggregates counts in one call so admin UI needs no N+1 requests.
+ */
 @RestController @RequestMapping("/api/admin")
 public class AdminController {
     private final UserRepository userRepo;

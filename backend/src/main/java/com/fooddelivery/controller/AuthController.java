@@ -7,6 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
+/**
+ * Auth endpoints: register/login/OTP verify/resend/logout issuing JWT.
+ * Why: passwords are BCrypt-hashed in AuthService; OTP expiry is enforced server-side.
+ */
 @RestController @RequestMapping("/api/auth")
 public class AuthController {
     private final AuthService service;

@@ -7,20 +7,40 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Address book logic: per-user CRUD with default-address handling and ownership guards.
+ * Why: only one default address per user; updates check owner to protect PII.
+ */
 @Service
 public class AddressService {
     private final AddressRepository repo;
     private final UserRepository userRepo;
 
+    /**
+     * Creates the service.
+     * @param r address repository
+     * @param ur user repository
+     */
     public AddressService(AddressRepository r, UserRepository ur) {
         this.repo = r;
         this.userRepo = ur;
     }
 
+    /**
+     * Lists addresses for a user.
+     * @param userId owner id
+     * @return addresses
+     */
     public List<Address> getByUser(Long userId) {
         return repo.findByUserId(userId);
     }
 
+    /**
+     * Creates an address; clears other defaults if this is default.
+     * @param userId owner id
+     * @param a address to save
+     * @return saved address
+     */
     public Address create(Long userId, Address a) {
         a.setUserId(userId);
         if (a.getIsDefault() != null && a.getIsDefault()) {

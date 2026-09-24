@@ -11,7 +11,8 @@
 Small restaurants lose orders to phone chaos with zero delivery visibility. This app gives one flow: customer browses restaurants → cart → checkout → order, restaurant confirms and prepares, delivery partner picks up with GPS pings, customer watches live Leaflet map to `DELIVERED`. Four roles (Customer, Restaurant, Delivery Partner, Admin) with JWT + OTP verification and a full `PLACED→DELIVERED+CANCELLED` lifecycle.
 
 ## 4. Architecture Diagram
-See `docs/diagrams/architecture.md` (Mermaid source + hosting boundary). Export PNG via draw.io/Excalidraw as `docs/diagrams/architecture.png` before review.
+![Architecture](docs/diagrams/architecture.png)
+Source: `docs/diagrams/architecture.md` (Mermaid + hosting boundary). ER: `docs/diagrams/er.png` (`er.dbml` source). Classes: `docs/diagrams/class-diagram.png`.
 
 ```
 Browser (React/Vite on Vercel) --REST /api + Bearer JWT--> Spring Boot (Render) --JPA--> PostgreSQL 15 (Railway)

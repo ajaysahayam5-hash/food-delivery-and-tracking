@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Order endpoints: place/cancel/list/update-status across the PLACED→DELIVERED lifecycle.
+ * Why: thin controller — pricing, payment and delivery creation live in OrderService.
+ */
 @RestController @RequestMapping("/api/orders")
 public class OrderController {
     private final OrderService service;

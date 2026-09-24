@@ -7,6 +7,10 @@ import org.springframework.web.bind.annotation.*;
 import com.fooddelivery.repository.UserRepository;
 import java.util.Map;
 
+/**
+ * Cart endpoints: get/add/update/remove/clear for the authenticated customer.
+ * Why: user id comes from JWT — clients never pass userId directly.
+ */
 @RestController @RequestMapping("/api/cart")
 public class CartController {
     private final CartService service;
