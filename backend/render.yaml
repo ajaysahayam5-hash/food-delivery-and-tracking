@@ -1,26 +1,45 @@
+databases:
+  - name: food-delivery-postgres
+    databaseName: food_delivery
+    user: fooduser
+    plan: free
+
 services:
   - type: web
     name: food-delivery-backend
     runtime: java
+    plan: free
     buildCommand: mvn -B clean package -DskipTests
     startCommand: java -jar target/food-delivery-backend-1.0.0.jar
+    healthCheckPath: /api/health
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
+      - key: JAVA_VERSION
+        value: 17
       - key: DB_HOST
-        sync: false
+        fromDatabase:
+          name: food-delivery-postgres
+          property: host
       - key: DB_PORT
-        value: 5432
+        fromDatabase:
+          name: food-delivery-postgres
+          property: port
       - key: DB_NAME
-        value: food_delivery
+        fromDatabase:
+          name: food-delivery-postgres
+          property: databaseName
       - key: DB_USER
-        sync: false
+        fromDatabase:
+          name: food-delivery-postgres
+          property: user
       - key: DB_PASSWORD
-        sync: false
+        fromDatabase:
+          name: food-delivery-postgres
+          property: password
       - key: JWT_SECRET
         sync: false
       - key: CORS_ALLOWED_ORIGINS
         sync: false
       - key: APP_OTP_DEV_MODE
         value: false
-    healthCheckPath: /api/health
