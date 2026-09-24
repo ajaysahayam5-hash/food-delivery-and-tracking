@@ -2,8 +2,8 @@
 > Order food online with real-time kitchen status and live delivery map — Java (Spring Boot) + React capstone.
 
 ## 2. Live Demo + Video Demo
-- Frontend (Vercel): `https://<your-frontend>.vercel.app` — set after deploy (see Deployment)
-- Backend (Render): `https://<your-backend>.onrender.com` — health: `/api/health`, Swagger: `/swagger-ui.html`
+- Frontend (Vercel): `https://frontend-lovat-omega-71.vercel.app` — live (deployed via `npx vercel --prod`)
+- Backend (Render): `https://<your-backend>.onrender.com` — health: `/api/health`, Swagger: `/swagger-ui.html` (deploy backend next, then set `VITE_API_URL` and redeploy frontend)
 - Video demo (2–4 min, Day 41+): add Loom/YouTube link here after recording
 - Local demo: frontend `http://localhost:3000`, backend `http://localhost:8080`
 
