@@ -54,7 +54,13 @@ public class SecurityConfig {
                 .requestMatchers("/swagger-ui/**","/swagger-ui.html","/v3/api-docs/**","/h2-console/**").permitAll()
                 .anyRequest().authenticated()
             )
-            .exceptionHandling(e -> e.authenticationEntryPoint(authenticationEntryPoint()))
+            .exceptionHandling(e -> e
+                .authenticationEntryPoint(authenticationEntryPoint())
+                .accessDeniedHandler((req, res, ex) -> {
+                    res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    res.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                    res.getWriter().write("{\"success\":false,\"data\":null,\"message\":\"Unauthorized - login required\"}");
+                }))
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
