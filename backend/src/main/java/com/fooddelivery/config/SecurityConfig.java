@@ -1,7 +1,9 @@
 package com.fooddelivery.config;
 
 import com.fooddelivery.security.JwtAuthFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.*;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.*;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -9,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.*;
@@ -42,6 +45,8 @@ public class SecurityConfig {
             .headers(h -> h.frameOptions(f -> f.disable()))
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/").permitAll()
+                .requestMatchers("/error").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/health").permitAll()
                 .requestMatchers("/api/restaurants/**","/api/menu-items/**","/api/categories/**").permitAll()
@@ -49,8 +54,24 @@ public class SecurityConfig {
                 .requestMatchers("/swagger-ui/**","/swagger-ui.html","/v3/api-docs/**","/h2-console/**").permitAll()
                 .anyRequest().authenticated()
             )
+            .exceptionHandling(e -> e.authenticationEntryPoint(authenticationEntryPoint()))
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
+    }
+
+    /**
+     * Returns 401 JSON (consistent envelope) for unauthenticated API calls.
+     * Why: browsers/examiners hitting protected paths without a token should get
+     * 401 + JSON, not a blank 403 page.
+     * @return entry point writing {success:false, message} with 401
+     */
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint(){
+        return (req, res, ex) -> {
+            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            res.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            res.getWriter().write("{\"success\":false,\"data\":null,\"message\":\"Unauthorized - login required\"}");
+        };
     }
 
     /**
