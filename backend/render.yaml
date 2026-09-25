@@ -7,16 +7,15 @@ databases:
 services:
   - type: web
     name: food-delivery-backend
-    runtime: java
+    runtime: docker
     plan: free
-    buildCommand: mvn -B clean package -DskipTests
-    startCommand: java -jar target/food-delivery-backend-1.0.0.jar
+    branch: main
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
     healthCheckPath: /api/health
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
-      - key: JAVA_VERSION
-        value: 17
       - key: DB_HOST
         fromDatabase:
           name: food-delivery-postgres
